@@ -12,7 +12,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="scripts/jquery.gridster.min.js"></script>
     <script src="scripts/d3.min.js"></script>
-    <script src="scripts/epoch.min.js"></script>    
+    <script src="scripts/epoch.js"></script>    
 </head>
 <body>
 
@@ -26,11 +26,12 @@
         <li data-row="3" data-col="1" data-sizex="1" data-sizey="1"></li>
 
         <li data-row="1" data-col="2" data-sizex="2" data-sizey="1"></li>
-        <li data-row="2" data-col="2" data-sizex="2" data-sizey="2">
-            <div id="area" class="epoch category10" style="height: 200px;"></div>
+        <li data-row="2" data-col="2" data-sizex="3" data-sizey="3">
         </li>
 
-        <li data-row="1" data-col="4" data-sizex="1" data-sizey="1"></li>
+        <li data-row="1" data-col="4" data-sizex="1" data-sizey="1">
+            <div id="area" class="epoch category10" style="height: 100%;"></div>
+        </li>
         <li data-row="2" data-col="4" data-sizex="2" data-sizey="1"></li>
         <li data-row="3" data-col="4" data-sizex="1" data-sizey="1"></li>
 
@@ -44,35 +45,47 @@
 </section>
 
 <script>
+
+var charts = {};
+
+
 $(function(){ //DOM Ready
     console.log("!");
     $(".gridster ul").gridster({
         widget_margins: [10, 10],
-        widget_base_dimensions: [140, 140]
+        widget_base_dimensions: [140, 140],
+        resize: {
+            enabled: true,
+            resize: function(e, ui, $widget) {
+                chart.width = $widget.width();
+                chart.height = $widget.height();
+                chart.dimensionsChanged();            
+            },   
+            stop: function(e, ui, $widget) {
+                chart.width = $widget.width();
+                chart.height = $widget.height();
+                chart.dimensionsChanged();            
+            }
+        }
     });
 
-    var data = [
-      { label: 'Layer 1', values: [ {time: Date.now() , y: 1} ] },
+    var areaChartData = [
+      // The first layer
+      {
+        label: "Layer 1",
+        values: [ { time: Date.now(), y: Math.random() }  ]
+      },
     ];    
-
-var areaChartData = [
-  // The first layer
-  {
-    label: "Layer 1",
-    values: [  ]
-  },
-
-
-];    
 
     var chart=  $('#area').epoch({
         type: 'time.area',
         data: areaChartData
-      });
+    });
+    charts["#area"] = chart;
 
     setInterval(function() {
-        chart.push([{time: Date.now() , y: 1 }]);
-    }, 1000);
+        chart.push([{time: Date.now() , y: Math.random() }]);
+    }, 1000);   
 
 });    
 </script>
